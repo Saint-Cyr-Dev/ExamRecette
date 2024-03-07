@@ -1,51 +1,39 @@
 <?php
 
-namespace App\Storage;
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Models\Recipe;
-use App\Storage\Contracts\RecipeStorageInterface;
+use App\Storage\SessionRecipeStorage;
+use App\Storage\MySqlDatabaseRecipeStorage; 
+use App\RecipeManager;
 
-class SessionRecipeStorage implements RecipeStorageInterface
-{
-    protected $sessionKey = 'recipes';
+session_start();
 
-    public function all()
-    {
-        return $_SESSION[$this->sessionKey] ?? [];
-    }
+$pdo = new PDO("mysql:host=localhost;dbname=examrecette", "root", "1234");
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    public function delete($id)
-    {
-        $recipes = $this->all();
-        unset($recipes[$id]);
-        $_SESSION[$this->sessionKey] = $recipes;
-    }
+$mysqlStorage = new MySqlDatabaseRecipeStorage($pdo); 
 
-    public function get($id)
-    {
-        $recipes = $this->all();
-        return $recipes[$id] ?? null;
-    }
+$sessionStorage = new SessionRecipeStorage();
 
-    public function store(Recipe $recipe)
-    {
-        $recipes = $this->all();
-        $id = max(array_keys($recipes)) + 1; // Generate unique ID
-        $recipe->setId($id);
-        $recipes[$id] = $recipe;
-        $_SESSION[$this->sessionKey] = $recipes;
-        return $id;
-    }
+$storage = $mysqlStorage; 
 
-    public function update(Recipe $recipe)
-    {
-        $recipes = $this->all();
-        $id = $recipe->getId();
-        if (isset($recipes[$id])) {
-            $recipes[$id] = $recipe;
-            $_SESSION[$this->sessionKey] = $recipes;
-        } else {
-            throw new \Exception("Recipe with ID $id not found.");
-        }
-    }
-}
+$manager = new RecipeManager($storage);
+
+$recipe = new Recipe;
+$recipe->setCreatedAt(new DateTime())
+    ->setName('Fondant au chocolat mi-cuit')
+    ->setDescription('La recette du fameux fondant au chocolat mi-cuit.')
+    ->setPeople(4)
+    ->setPreparationTime(40);
+$addedRecipeId = $manager->addRecipe($recipe);
+
+$recipeToUpdate = $manager->getRecipe($addedRecipeId);
+$recipeToUpdate->setName('Fondant au chocolat revisité');
+$manager->updateRecipe($recipeToUpdate);
+
+$manager->deleteRecipe($addedRecipeId);
+
+$recipes = $manager->getRecipes();
+print_r($recipes);
+?>

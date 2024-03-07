@@ -1,4 +1,9 @@
 <?php
+
+namespace App\Models;
+
+use DateTime;
+
 class Recipe
 {
     protected $id;
@@ -8,71 +13,65 @@ class Recipe
     protected $people;
     protected $preparation_time;
 
-    // Getters and Setters
-
-    public function getId()
+    // Getters
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    public function getCreatedAt()
+    public function getCreatedAt(): ?DateTime
     {
         return $this->created_at;
     }
 
-    public function setCreatedAt($created_at)
-    {
-        $this->created_at = $created_at;
-        return $this;
-    }
-
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function setName($name)
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function setDescription($description)
-    {
-        $this->description = $description;
-        return $this;
-    }
-
-    public function getPeople()
+    public function getPeople(): ?int
     {
         return $this->people;
     }
 
-    public function setPeople($people)
-    {
-        $this->people = $people;
-        return $this;
-    }
-
-    public function getPreparationTime()
+    public function getPreparationTime(): ?int
     {
         return $this->preparation_time;
     }
 
-    public function setPreparationTime($preparation_time)
+    // Setters
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    public function setCreatedAt(DateTime $created_at): void
+    {
+        $this->created_at = $created_at;
+    }
+
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    public function setPeople(int $people): void
+    {
+        $this->people = $people;
+    }
+
+    public function setPreparationTime(int $preparation_time): void
     {
         $this->preparation_time = $preparation_time;
-        return $this;
     }
 }

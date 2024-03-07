@@ -1,7 +1,6 @@
 <?php
 
 namespace App;
-
 use App\Models\Recipe;
 use App\Storage\Contracts\RecipeStorageInterface;
 
@@ -14,28 +13,30 @@ class RecipeManager
         $this->storage = $storage;
     }
 
-    public function addRecipe(Recipe $recipe)
+    public function addRecipe(Recipe $recipe): int
     {
         return $this->storage->store($recipe);
     }
 
-    public function updateRecipe(Recipe $recipe)
-    {
-        return $this->storage->update($recipe);
-    }
-
-    public function deleteRecipe($id)
-    {
-        return $this->storage->delete($id);
-    }
-
-    public function getRecipe($id)
+    public function getRecipe(int $id): ?Recipe
     {
         return $this->storage->get($id);
     }
 
-    public function getRecipes()
+    public function updateRecipe(Recipe $recipe): void
+    {
+        $this->storage->update($recipe);
+    }
+
+    public function deleteRecipe(int $id): void
+    {
+        $this->storage->delete($id);
+    }
+
+    public function getRecipes(): array
     {
         return $this->storage->all();
     }
 }
+
+?>
